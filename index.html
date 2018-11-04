@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="idb.js"></script>
+		<script>
+			idb = new IDB({
+				'name': 'test',
+				'tables': [{
+					'name': 'users',
+					'options': {'autoIncrement': true}
+				}]
+			});
+		</script>
+	</head>
+	<body>
+		<a>idb controller attached to window.</a>
+	</body>
+</html>
