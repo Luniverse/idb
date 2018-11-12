@@ -3,7 +3,7 @@
 	<head>
 		<script src="idb.js"></script>
 		<script>
-			idb = new IDB({
+			IDB.connect({
 				'name': 'test',
 				'tables': [{
 					'name': 'users',
@@ -13,6 +13,6 @@
 		</script>
 	</head>
 	<body>
-		<h3>idb controller attached to window.</h3>
+		<h3>IDB connected.</h3>
 	</body>
 </html>
