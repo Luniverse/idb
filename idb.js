@@ -1,10 +1,12 @@
 /*!
- * idb.js IndexedDB wrapper v2.0
+ * idb.js IndexedDB wrapper v2.1
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
- * https://github.com/Luniversity/idb
+ * https://github.com/luniverse/idb
  */
 class IDB {
+	
+	// Static connector
 	static connect(setup) {
 		
 		// Connect to DB
@@ -34,40 +36,43 @@ class IDB {
 
 // Table controller
 IDB.Table = class {
+	
+	// Constructor
 	constructor(name) {
 		this.name = name;
 	}
 	
-	// Start new transaction
-	transaction() {
-		return new Promise((resolve, reject) => {
-			IDB.connection.then(db => {
-				resolve(db.transaction([this.name], 'readwrite').objectStore(this.name));
+	// Perform operation in transaction
+	transaction(operation) {
+		return IDB.connection.then(db => {
+			
+			// Retrieve operation result
+			const transaction = db.transaction(this.name, 'readwrite');
+			const table = transaction.objectStore(this.name);
+			const result = operation(table);
+			
+			// Return promise or wrap IDBRequest in promise
+			if(result instanceof Promise) return result;
+			else return new Promise((resolve, reject) => {
+				result.onerror = () => reject(result.error);
+				result.onsuccess = () => resolve(result.result);
 			});
-		});
-	}
-	
-	// Wrap request in promise
-	promise(request) {
-		return new Promise((resolve, reject) => {
-			request.onerror = () => reject(request.error);
-			request.onsuccess = () => resolve(request.result);
 		});
 	}
 	
 	// Insert data
 	set(index, value) {
-		return this.transaction().then(table => this.promise(table.put(value, index)));
+		return this.transaction(table => table.put(value, index));
 	}
 	
 	// Select data by index
 	get(index) {
-		return this.transaction().then(table => this.promise(table.get(index)));
+		return this.transaction(table => table.get(index));
 	}
 	
 	// Select all data
 	all() {
-		return this.transaction().then(table => new Promise((resolve, reject) => {
+		return this.transaction(table => new Promise((resolve, reject) => {
 			var rows = {};
 			var request = table.openCursor();
 			request.onerror = () => reject(request.error);
@@ -96,16 +101,16 @@ IDB.Table = class {
 	
 	// Clear data
 	clear() {
-		return this.transaction().then(table => this.promise(table.clear()));
+		return this.transaction(table => table.clear());
 	}
 	
 	// Delete entry by index
 	delete(index) {
-		return this.transaction().then(table => this.promise(table.delete(index)));
+		return this.transaction(table => table.delete(index));
 	}
 	
 	// Add new entry
 	add(value) {
-		return this.transaction().then(table => this.promise(table.put(value)));
+		return this.transaction(table => table.put(value));
 	}
 }

@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="idb.js"></script>
+		<script src="idb.min.js"></script>
 		<script>
 			IDB.connect({
-				'name': 'test',
-				'tables': [{
-					'name': 'users',
-					'options': {'autoIncrement': true}
-				}]
+				name: 'MyProjectStore',
+				tables: [
+					{name: 'test1'},
+					{name: 'test2'}
+				]
 			});
 		</script>
 	</head>
 	<body>
-		<h3>IDB connected.</h3>
+		<h3>IDB connected and bound to global scope.</h3>
+		<p>Open your console and try something like:</p>
+		<code>
+			IDB.test1.set('key1', 'value1');<br>
+			await IDB.test1.get('key1');
+		</code>
+		<p>Source and documentation: <a href="https://github.com/luniverse/idb">https://github.com/luniverse/idb</a></p>
 	</body>
 </html>
