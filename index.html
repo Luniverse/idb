@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="idb.min.js"></script>
+		<script src="idb.js"></script>
 		<script>
 			IDB.connect({
-				name: 'MyProjectStore',
-				tables: [
-					{name: 'test1'},
-					{name: 'test2'}
-				]
-			});
+				name: 'MyProjectStore'
+			},[
+				{name: 'test1'},
+				{name: 'test2'}
+			]);
 		</script>
 	</head>
 	<body>

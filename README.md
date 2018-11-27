@@ -11,12 +11,11 @@ By including, the `IDB` class becomes accessible within your global scope.
 Next, connect to the DB you want to use for your project. Choose a name and setup the tables your DB should contain.
 ```javascript
 IDB.connect({
-	name: 'MyProjectStore',
-	tables: [
-		{name: 'test1'},
-		{name: 'test2'}
-	]
-});
+	name: 'MyProjectStore'
+},[
+	{name: 'test1'},
+	{name: 'test2'}
+]);
 ```
 
 The tables you define get bound to the `IDB` context. Now, you are ready to perform transactions. For example, insert and read a value from `test1`:

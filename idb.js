@@ -1,5 +1,5 @@
 /*!
- * idb.js IndexedDB wrapper v2.1
+ * idb.js IndexedDB wrapper v2.2
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
  * https://github.com/luniverse/idb
@@ -7,11 +7,11 @@
 class IDB {
 	
 	// Static connector
-	static connect(setup) {
+	static connect(options, tables) {
 		
 		// Connect to DB
 		this.connection = new Promise((resolve, reject) => {
-			const request = indexedDB.open(setup.name, setup.version || 1);
+			const request = indexedDB.open(options.name, options.version || 1);
 			
 			// Reject or resolve connection request
 			request.onerror = () => reject(request.error);
@@ -25,12 +25,12 @@ class IDB {
 				for(const name of db.objectStoreNames) db.deleteObjectStore(name);
 				
 				// Create new tables
-				for(const table of setup.tables) db.createObjectStore(table.name, table.options);
+				for(const table of tables) db.createObjectStore(table.name, table.options);
 			}
 		});
 		
 		// Bind table controllers
-		for(const table of setup.tables) this[table.name] = new IDB.Table(table.name);
+		for(const table of tables) this[table.name] = new IDB.Table(table.name);
 	}
 }
 
