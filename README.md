@@ -8,11 +8,9 @@ First, include the script into your document's head. As of now, there is no buil
 ```
 
 By including, the `IDB` class becomes accessible within your global scope.
-Next, connect to the DB you want to use for your project. Choose a name and setup the tables your DB should contain.
+Next, connect to the DB and setup the tables you need for your project.
 ```javascript
-IDB.connect({
-	name: 'MyProjectStore'
-},[
+IDB.connect([
 	{name: 'test1'},
 	{name: 'test2'}
 ]);
