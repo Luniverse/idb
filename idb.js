@@ -1,5 +1,5 @@
 /*!
- * idb.js IndexedDB wrapper v2.3
+ * idb.js IndexedDB wrapper v2.4
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
  * https://github.com/luniverse/idb
@@ -7,7 +7,7 @@
 class IDB {
 	
 	// Static connector
-	static connect(tables, options={}) {
+	static open(tables, options={}) {
 		
 		// Connect to DB
 		this.connection = new Promise((resolve, reject) => {
@@ -61,12 +61,12 @@ IDB.Table = class {
 		});
 	}
 	
-	// Insert data
-	set(index, value) {
+	// Write data
+	put(value, index) {
 		return this.transaction(table => table.put(value, index));
 	}
 	
-	// Select data by index
+	// Read data by index
 	get(index) {
 		return this.transaction(table => table.get(index));
 	}
@@ -108,10 +108,5 @@ IDB.Table = class {
 	// Delete entry by index
 	delete(index) {
 		return this.transaction(table => table.delete(index));
-	}
-	
-	// Add new entry
-	add(value) {
-		return this.transaction(table => table.put(value));
 	}
 }

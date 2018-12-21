@@ -3,7 +3,7 @@
 	<head>
 		<script src="idb.js"></script>
 		<script>
-			IDB.connect([
+			IDB.open([
 				{name: 'test1'},
 				{name: 'test2'}
 			]);
@@ -13,7 +13,7 @@
 		<h3>IDB connected and bound to global scope.</h3>
 		<p>Open your console and try something like:</p>
 		<code>
-			IDB.test1.set('key1', 'value1');<br>
+			IDB.test1.put('value1', 'key1');<br>
 			await IDB.test1.get('key1');
 		</code>
 		<p>Source and documentation: <a href="https://github.com/luniverse/idb">https://github.com/luniverse/idb</a></p>

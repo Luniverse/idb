@@ -10,15 +10,15 @@ First, include the script into your document's head. As of now, there is no buil
 By including, the `IDB` class becomes accessible within your global scope.
 Next, connect to the DB and setup the tables you need for your project.
 ```javascript
-IDB.connect([
+IDB.open([
 	{name: 'test1'},
 	{name: 'test2'}
 ]);
 ```
 
-The tables you define get bound to the `IDB` context. Now, you are ready to perform transactions. For example, insert and read a value from `test1`:
+The tables you define get bound to the `IDB` context. Now, you are ready to perform transactions. For example, insert and select a value from `test1`:
 ```javascript
-IDB.test1.set('key1', 'value1');
+IDB.test1.put('value1', 'key1');
 await IDB.test1.get('key1');
 ```
 
