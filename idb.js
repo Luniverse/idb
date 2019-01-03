@@ -1,112 +1,104 @@
 /*!
- * idb.js IndexedDB wrapper v2.4
+ * idb.js IndexedDB wrapper v3.0
  * Licensed under the MIT license
- * Copyright (c) 2018 Lukas Jans
+ * Copyright (c) 2019 Lukas Jans
  * https://github.com/luniverse/idb
  */
-class IDB {
+IDB = class IDB {
+	
+	// Wrap IDBRequest im promise
+	static promise(request) {
+		return new Promise((resolve, reject) => {
+			request.onerror = () => reject(request.error);
+			request.onsuccess = () => resolve(request.result);
+		});
+	}
 	
 	// Static connector
 	static open(tables, options={}) {
 		
 		// Connect to DB
-		this.connection = new Promise((resolve, reject) => {
-			const request = indexedDB.open(options.name || 'IDB', options.version || 1);
+		const request = indexedDB.open(options.name || 'IDB', options.version || 1);
+		this.connection = this.promise(request);
 			
-			// Reject or resolve connection request
-			request.onerror = () => reject(request.error);
-			request.onsuccess = () => resolve(request.result);
-
-			// Perform upgrade
-			request.onupgradeneeded = () => {
-				const db = request.result;
-				
-				// Clear old tables
-				for(const name of db.objectStoreNames) db.deleteObjectStore(name);
-				
-				// Create new tables
-				for(const table of tables) db.createObjectStore(table.name, table.options);
-			}
-		});
+		// Perform upgrade
+		request.onupgradeneeded = e => {
+			const db = request.result;
+			
+			// Clear old tables
+			for(const name of db.objectStoreNames) if(!tables[name]) db.deleteObjectStore(name);
+			
+			// Create new tables
+			for(const [name, options] of Object.entries(tables)) if(!db.objectStoreNames.contains(name)) db.createObjectStore(name, options);
+			
+			// Bubble upgrade event
+			if(options.upgrade) options.upgrade(e);
+		}
 		
 		// Bind table controllers
-		for(const table of tables) this[table.name] = new IDB.Table(table.name);
-	}
-}
-
-
-// Table controller
-IDB.Table = class {
-	
-	// Constructor
-	constructor(name) {
-		this.name = name;
+		for(const name of Object.keys(tables)) this[name] = new this.Table(name);
 	}
 	
-	// Perform operation in transaction
-	transaction(operation) {
-		return IDB.connection.then(db => {
-			
-			// Retrieve operation result
-			const transaction = db.transaction(this.name, 'readwrite');
-			const table = transaction.objectStore(this.name);
-			const result = operation(table);
-			
-			// Return promise or wrap IDBRequest in promise
-			if(result instanceof Promise) return result;
-			else return new Promise((resolve, reject) => {
-				result.onerror = () => reject(result.error);
-				result.onsuccess = () => resolve(result.result);
-			});
-		});
-	}
+	// Table controller
+	static get Table() {
+		return class {
 	
-	// Write data
-	put(value, index) {
-		return this.transaction(table => table.put(value, index));
-	}
-	
-	// Read data by index
-	get(index) {
-		return this.transaction(table => table.get(index));
-	}
-	
-	// Select all data
-	all() {
-		return this.transaction(table => new Promise((resolve, reject) => {
-			var rows = {};
-			var request = table.openCursor();
-			request.onerror = () => reject(request.error);
-			
-			// Iterate over cursor values
-			request.onsuccess = () => {
-				var cursor = request.result;
-				if(cursor) {
-					rows[cursor.key] = cursor.value;
-					cursor.continue();
-				} else resolve(rows);
+			// Constructor
+			constructor(name) {
+				this.name = name;
 			}
-		}));
-	}
-	
-	// Select data by condition
-	where(condition) {
-		return this.all().then(rows => {	
-			var filtered = {};
-			for(var index in rows) {
-				if(condition(rows[index])) filtered[index] = rows[index];
+			
+			// Perform operation in transaction
+			transaction(operation) {
+				return IDB.connection.then(db => {
+					
+					// Retrieve operation result
+					const transaction = db.transaction(this.name, 'readwrite');
+					const table = transaction.objectStore(this.name);
+					const result = operation(table);
+					
+					// Return promise or wrap IDBRequest in promise
+					return result instanceof Promise ? result : IDB.promise(result);
+				});
+			}	
+			
+			// Read data by index
+			get(index) {
+				return this.transaction(table => table.get(index));
 			}
-			return filtered;
-		});
-	}
-	
-	// Clear data
-	clear() {
-		return this.transaction(table => table.clear());
-	}
-	
-	// Delete entry by index
-	delete(index) {
-		return this.transaction(table => table.delete(index));
+			
+			// Write data by index
+			put(value, index) {
+				return this.transaction(table => table.put(value, index));
+			}
+			
+			// Delete data by index
+			delete(index) {
+				return this.transaction(table => table.delete(index));
+			}
+			
+			// Clear all data
+			clear() {
+				return this.transaction(table => table.clear());
+			}
+			
+			// Read all data
+			all(filter) {
+				return this.transaction(table => new Promise((resolve, reject) => {
+					const rows = [];
+					const request = table.openCursor();
+					request.onerror = () => reject(request.error);
+					
+					// Iterate over cursor values
+					request.onsuccess = () => {
+						const cursor = request.result;
+						if(cursor) {
+							rows.push(cursor.value);
+							cursor.continue();
+						} else resolve(filter ? rows.filter(filter) : rows);
+					}
+				}));
+			}
+		}
 	}
 }
