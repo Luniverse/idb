@@ -10,10 +10,10 @@ First, include the script into your document's head. As of now, there is no buil
 By including, the `IDB` class becomes accessible within your global scope.
 Next, connect to the DB and setup the tables you need for your project.
 ```javascript
-IDB.open([
-	{name: 'test1'},
-	{name: 'test2'}
-]);
+IDB.open({
+	test1: {},
+	test2: {}
+});
 ```
 
 The tables you define get bound to the `IDB` context. Now, you are ready to perform transactions. For example, insert and select a value from `test1`:
