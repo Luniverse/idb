@@ -1,5 +1,5 @@
 # IDB
-Promise-based wrapper around the massive [IndexedDB](https://developer.mozilla.org/de/docs/IndexedDB) API.
+Promise-based wrapper around the [IndexedDB](https://developer.mozilla.org/de/docs/IndexedDB) API.
 
 ### Getting started
 You would mostly want to make use of the IDB inside a [ServiceWorker](https://developers.google.com/web/fundamentals/primers/service-workers/):
@@ -14,7 +14,7 @@ IDB.open({
 	table3: {autoIncrement: true},
 }, config);
 ```
-The following settings can be passed in `config`:
+The following settings can be passed in the optional `config` object:
 - `name` sets the Database name (defaults to "IDB")
 - `version` provides the version of the table structure (defaults to 1)
   - An increment in version triggers a database upgrade
