@@ -20,7 +20,7 @@ The following settings can be passed in the optional `config` object:
   - An increment in version triggers a database upgrade
 - `upgrade` defines a function to perform when a database upgrade was performed
 
-You can pass the follwing `options` for each table:
+You can pass the follwing options for each table:
 - `keyPath` specifies a "primary key" of inserted objects
 - `autoIncrement` determines, whether inserted objects get an incrementing numeric key
 
