@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="idb.js"></script>
+		<script src="idb.min.js"></script>
 		<script>
 			IDB.open({
-				test1: {},
-				test2: {}
+				table1: {},
+				table2: {keyPath: 'id'},
+				table3: {autoIncrement: true},
 			});
 		</script>
 	</head>
 	<body>
-		<h3>IDB connected and bound to global scope.</h3>
+		<h3>IDB test</h3>
 		<p>Open your console and try something like:</p>
 		<code>
-			IDB.test1.put('value1', 'key1');<br>
-			await IDB.test1.get('key1');
+			IDB.table1.put('value1', 'key1');<br>
+			await IDB.table1.get('key1');
 		</code>
 		<p>Source and documentation: <a href="https://github.com/luniverse/idb">https://github.com/luniverse/idb</a></p>
 	</body>

@@ -1,7 +1,7 @@
 /*!
  * idb.js IndexedDB wrapper v3.0
  * Licensed under the MIT license
- * Copyright (c) 2019 Lukas Jans
+ * Copyright (c) 2020 Lukas Jans
  * https://github.com/luniverse/idb
  */
 IDB = class IDB {
@@ -15,10 +15,10 @@ IDB = class IDB {
 	}
 	
 	// Static connector
-	static open(tables, options={}) {
+	static open(tables, config={}) {
 		
 		// Connect to DB
-		const request = indexedDB.open(options.name || 'IDB', options.version || 1);
+		const request = indexedDB.open(config.name || 'IDB', config.version || 1);
 		this.connection = this.promise(request);
 			
 		// Perform upgrade
@@ -32,7 +32,7 @@ IDB = class IDB {
 			for(const [name, options] of Object.entries(tables)) if(!db.objectStoreNames.contains(name)) db.createObjectStore(name, options);
 			
 			// Bubble upgrade event
-			if(options.upgrade) options.upgrade(e);
+			if(config.upgrade) config.upgrade(e);
 		}
 		
 		// Bind table controllers
