@@ -4,7 +4,7 @@
  * Copyright (c) 2020 Lukas Jans
  * https://github.com/luniverse/idb
  */
-IDB = class IDB {
+const IDB = class IDB {
 	
 	// Wrap IDBRequest im promise
 	static promise(request) {
