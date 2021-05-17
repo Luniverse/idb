@@ -4,7 +4,7 @@ Promise-based wrapper around the [IndexedDB](https://developer.mozilla.org/de/do
 ### Getting started
 You would mostly want to make use of the IDB inside a [ServiceWorker](https://developers.google.com/web/fundamentals/primers/service-workers/):
 ```javascript
-self.importScripts('elements.min.js');
+self.importScripts('idb.min.js');
 ```
 Open a new IDB connection and setup the tables you need for your project:
 ```javascript
