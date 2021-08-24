@@ -1,8 +1,8 @@
 /*!
  * idb.js IndexedDB wrapper v3.0
  * Licensed under the MIT license
- * Copyright (c) 2020 Lukas Jans
- * https://github.com/luniverse/idb
+ * Copyright (c) 2021 Lukas Jans
+ * https://github.com/ljans/idb
  */
 const IDB = class IDB {
 	
