@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="idb.min.js"></script>
+		<script src="idb.js"></script>
 		<script>
-			IDB.open({
+			var idb = new IDB({
 				table1: {},
 				table2: {keyPath: 'id'},
 				table3: {autoIncrement: true},
@@ -14,8 +14,8 @@
 		<h3>IDB test</h3>
 		<p>Open your console and try something like:</p>
 		<code>
-			IDB.table1.put('value1', 'key1');<br>
-			await IDB.table1.get('key1');
+			await idb.table1.put('value1', 'key1');<br>
+			await idb.table1.get('key1');
 		</code>
 		<p>Source and documentation: <a href="https://github.com/ljans/idb">https://github.com/ljans/idb</a></p>
 	</body>

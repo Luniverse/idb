@@ -1,21 +1,21 @@
 /*!
- * idb.js IndexedDB wrapper v3.0
+ * idb.js IndexedDB wrapper v3.1
  * Licensed under the MIT license
- * Copyright (c) 2021 Lukas Jans
+ * Copyright (c) 2023 Lukas Jans
  * https://github.com/ljans/idb
  */
-const IDB = class IDB {
+class IDB {
 	
 	// Wrap IDBRequest im promise
-	static promise(request) {
+	promise(request) {
 		return new Promise((resolve, reject) => {
 			request.onerror = () => reject(request.error);
 			request.onsuccess = () => resolve(request.result);
 		});
 	}
 	
-	// Static connector
-	static open(tables, config={}) {
+	// Constructor
+	constructor(tables, config={}) {
 		
 		// Connect to DB
 		const request = indexedDB.open(config.name || 'IDB', config.version || 1);
@@ -36,21 +36,22 @@ const IDB = class IDB {
 		}
 		
 		// Bind table controllers
-		for(const name of Object.keys(tables)) this[name] = new this.Table(name);
+		for(const name of Object.keys(tables)) this[name] = new this.Table(name, this);
 	}
 	
 	// Table controller
-	static get Table() {
+	get Table() {
 		return class {
 	
 			// Constructor
-			constructor(name) {
+			constructor(name, instance) {
 				this.name = name;
+				this.instance = instance;
 			}
 			
 			// Perform operation in transaction
 			transaction(operation) {
-				return IDB.connection.then(db => {
+				return this.instance.connection.then(db => {
 					
 					// Retrieve operation result
 					const transaction = db.transaction(this.name, 'readwrite');
@@ -58,7 +59,7 @@ const IDB = class IDB {
 					const result = operation(table);
 					
 					// Return promise or wrap IDBRequest in promise
-					return result instanceof Promise ? result : IDB.promise(result);
+					return result instanceof Promise ? result : this.instance.promise(result);
 				});
 			}	
 			
